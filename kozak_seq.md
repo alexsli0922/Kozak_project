@@ -405,7 +405,11 @@ for line_list in file_list:
 
 print("done")
 ```
+Use **bedtools getfasta** to get the TIS sequences. 
+```~/kozak/bin/bedtools2/bin/bedtools getfasta -fi /Users/xuanyi/kozak/data/15_07_13_gencode_fasta/hg38.fa -bed kozak_mut_cosmic.bed -fo kozak_mut_cosmic.fa```
+```python
 
+```
 s
 
 s
