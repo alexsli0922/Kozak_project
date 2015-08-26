@@ -405,11 +405,196 @@ for line_list in file_list:
 
 print("done")
 ```
-Use **bedtools getfasta** to get the TIS sequences. 
-```~/kozak/bin/bedtools2/bin/bedtools getfasta -fi /Users/xuanyi/kozak/data/15_07_13_gencode_fasta/hg38.fa -bed kozak_mut_cosmic.bed -fo kozak_mut_cosmic.fa```
+Use **bedtools getfasta** to get the TIS sequences:
+* ```~/kozak/bin/bedtools2/bin/bedtools getfasta -fi /Users/xuanyi/kozak/data/15_07_13_gencode_fasta/hg38.fa -bed kozak_mut_cosmic.bed -fo kozak_mut_cosmic.fa```
+To capitalize all bases:
 ```python
-
+import re
+f = open("kozak_mut_cosmic.fa","rU")
+output = open("kozak_ori_cosmic.txt","w")
+file_list = f.readlines()
+for line_list in file_list:
+    if line_list[0] != ">":
+        temp = line_list.upper()
+        output.write(temp)
+print("done")
 ```
+Get a file in this format: chr	start	end	mut	ref	alt
+```python
+## start codon to TIS
+## move strand info to the last column
+import re
+f = open("/Users/xuanyi/kozak/analysis/gencode_v22/TIS_mut_kozak.txt","rU")
+output = open("kozak_mut_pos_cosmic.txt","w")
+file_list = f.readlines()
+for line_list in file_list:
+    line = re.split("\t",line_list)
+    strand = line[8]
+    if strand == "+":
+        start = int(line[3])
+        start+=2
+        line[3] = str(start)
+        end = int(line[4])
+        end-=1
+        line[4] = str(end)
+    else:
+        start = int(line[3])
+        line[3] = str(start)
+        end = int(line[4])
+        end-=3
+        line[4] = str(end)
+    output.write("chr" + line[0] + "\t" + line[3] + "\t" + line[4] + "\t" + line[10] + "\t" + line[12] + "\t" + line[13]  + "\n")
+print("done")
+```
+Get the all the mutated TIS sequences:
+```python
+import re
+f = open("/Users/xuanyi/kozak/analysis/gencode_v22/TIS_mut_kozak.txt","rU")
+f1=open("kozak_ori_cosmic.txt","rU")
+f2=open("kozak_mut_pos_cosmic.txt","rU")
+output = open("kozak_mut_seq_cosmic.txt","w")
+file_list = f.readlines()
+file_list1 = f1.readlines()
+file_list2 = f2.readlines()
+
+names = {}
+for i in range (0,len(file_list)):
+    line = re.split("\t",file_list[i])
+    if file_list2[i][-1] == "\n":
+        file_list2[i] = file_list2[i][:-1]
+    line2 = re.split("\t",file_list2[i])
+    gtf= re.split(";",line[7])
+    gname = gtf[4][12:-1]
+    if gname in names.keys():
+        newline = ""
+        pos = int(line2[3]) - int(line2[1]) -1
+        j = 0
+        while j < len(file_list1[i]):
+            if j == pos:
+                for k in line2[5]:
+                    newline += k
+                    j += 1
+            else:
+                newline += file_list1[i][j]
+                j += 1
+        if newline[-1] == "\n":
+            newline = newline[:-1]
+        names[gname].append(newline)
+    else:
+        names[gname] = []
+        if file_list1[i][-1] == "\n":
+            nl = file_list1[i][:-1]
+        names[gname].append(nl)
+        newline = ""
+        pos = int(line2[3]) - int(line2[1]) -1
+        j = 0
+        while j < len(file_list1[i]):
+            if j == pos:
+                for k in line2[5]:
+                    newline += k
+                    j += 1
+            else:
+                newline += file_list1[i][j]
+                j += 1
+        if newline[-1] == "\n":
+            newline = newline[:-1]
+        names[gname].append(newline)
+for n in names:
+    output.write( n+ "\t")
+    for m in names[n]:
+        output.write(m + "\t")
+    output.write("\n")
+print "done"
+```
+Get the kozak score for all TIS:
+```python
+import re
+f = open("kozak_mut_seq.txt","rU")
+f1=open("kozak_strength.txt","rU")
+output = open("kozak_score_test.txt","w")
+file_list = f.readlines()
+file_list1 = f1.readlines()
+
+sdict = {}
+for line_list1 in file_list1:
+    sline = re.split("\t", line_list1)
+    sdict[sline[0]] = sline[1]
+
+for i in range (0,len(file_list)):
+    line = re.split("\t",file_list[i])
+    output.write(line[0] + "\t" + str(len(line)-3) + "\t")
+    j = 1
+    while j < len(line) - 1:
+        temp = line[j]
+        if temp[6:9] == "ATG":
+            newline = ""
+            for k in range(0,len(temp)):
+                if temp[k] == "T":
+                    newline += "U"
+                else:
+                    newline += temp[k]
+        else:
+            newline = ""
+            k = len(temp)
+            while (k):
+                t = k-1
+                if temp[t] == "A":
+                    newline+="U"
+                if temp[t] == "T":
+                    newline+="A"
+                if temp[t] == "C":
+                    newline+="G"
+                if temp[t] == "G":
+                    newline+="C"
+                k -= 1
+        try:
+            score = sdict[newline]
+            output.write(score + "\t")
+        except KeyError:
+            print temp
+        j += 1
+    output.write("\n")
+print "done"
+```
+Get the difference between ref and mut for each genes
+```python
+## start codon to TIS
+## move strand info to the last column
+import re
+f = open("kozak_score.txt","rU")
+output = open("diff_score.txt","w")
+file_list = f.readlines()
+for line_list in file_list:
+    line = re.split("\t",line_list)
+    ref = line[2]
+    diff = 0
+    for i in range (3,len(line)-1):
+        mut = line[i]
+        try:
+            temp = int(ref) - int(mut)
+        except ValueError:
+            continue
+        if temp > diff:
+            diff = temp
+    output.write(line[0] + "\t" + str(diff)+ "\n")
+##    strand = line[8]
+##    if strand == "+":
+##        start = int(line[3])
+##        start+=2
+##        line[3] = str(start)
+##        end = int(line[4])
+##        end-=1
+##        line[4] = str(end)
+##    else:
+##        start = int(line[3])
+##        line[3] = str(start)
+##        end = int(line[4])
+##        end-=3
+##        line[4] = str(end)
+##    output.write("chr" + line[0] + "\t" + line[3] + "\t" + line[4]  + "\n")
+print("done")
+```
+
 s
 
 s
