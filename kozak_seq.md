@@ -14,6 +14,8 @@
 * **CosmicNonCodingVariants.vcf**: All noncoding mutations in COSMIC
 * **COSMIC Whole Genome** (coding & noncoding): Contains only mutations found with whole genome sequencing experiments. 
 
+**Kozak strength**
+* ADD THIS!!!!
 ## Analysis
 **Getting the TIS coordinations in the human genome annotation**
 
@@ -343,6 +345,65 @@ for line_list in file_list:
 ##for n in names:
 ##    output.write( n+"\t"+str(names[n])+'\n')
 print "done"
+```
+## Kozak strength prediction
+I used dinucleotide PWM from the kozak paper (link to the paper)
+* Get the sequence from -6 to +5
+* Both ref and alt and get their predicted kozak strength
+
+Get only mutations from -6 to +5 excluding the start codon
+```python
+import re
+f = open("TIS_mut_strand_tm.txt","rU")
+output = open("TIS_mut_kozak.txt","w")
+file_list = f.readlines()
+
+for line_list in file_list:
+    line = re.split("\t",line_list)
+    ref = line[12]
+    alt = line[13]
+    if len(ref) == len(alt):
+        if line[8] == "+":
+            for i in range (0,len(line[12])):
+                if line[12][i] != line[13][i]:
+                    pos = int(line[10]) - int(line[3]) + i
+        else:
+            for i in range (0,len(line[12])):
+                if line[12][i] != line[13][i]:
+                    pos = int(line[4]) - int(line[10]) - i
+        if pos > 2 and pos < 14 and pos != 9 and pos != 10 and pos != 11:
+            output.write(line_list)
+##for n in names:
+##    output.write( n+"\t"+str(names[n])+'\n')
+print "done"
+```
+Create a bed file with coordinates of mutated TIS sites 
+```python
+## start codon to TIS
+## move strand info to the last column
+import re
+f = open("/Users/xuanyi/kozak/analysis/gencode_v22/TIS_mut_kozak.txt","rU")
+output = open("kozak_mut_cosmic.bed","w")
+file_list = f.readlines()
+for line_list in file_list:
+    line = re.split("\t",line_list)
+    strand = line[8]
+    if strand == "+":
+        start = int(line[3])
+        start+=2
+        line[3] = str(start)
+        end = int(line[4])
+        end-=1
+        line[4] = str(end)
+    else:
+        start = int(line[3])
+        line[3] = str(start)
+        end = int(line[4])
+        end-=3
+        line[4] = str(end)
+    output.write("chr" + line[0] + "\t" + line[3] + "\t" + line[4]  + "\n")
+
+print("done")
 ```
 
 s
