@@ -15,7 +15,7 @@
 * **COSMIC Whole Genome** (coding & noncoding): Contains only mutations found with whole genome sequencing experiments. 
 
 **Kozak strength**
-* ADD THIS!!!!
+* 
 ## Analysis
 **Getting the TIS coordinations in the human genome annotation**
 
@@ -83,7 +83,6 @@ for line_list in file_list:
         output.write(newline)
     else:
         output.write(line_list)
-
 print("done")
 ```
 Run **bedtools intersect** to find mutations in the COSMIC database that occur in the TIS region:
