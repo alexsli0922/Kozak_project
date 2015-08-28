@@ -291,7 +291,7 @@ Create a bed file with coordinates of mutated TIS sites
 ## start codon to TIS
 ## move strand info to the last column
 import re
-f = open("/Users/xuanyi/kozak/analysis/gencode_v22/TIS_mut_kozak.txt","rU")
+f = open("TIS_mut_kozak.txt","rU")
 output = open("kozak_mut_cosmic.bed","w")
 file_list = f.readlines()
 for line_list in file_list:
@@ -314,7 +314,7 @@ for line_list in file_list:
 print("done")
 ```
 Use **bedtools getfasta** to get the TIS sequences:
-* ```~/kozak/bin/bedtools2/bin/bedtools getfasta -fi /Users/xuanyi/kozak/data/15_07_13_gencode_fasta/hg38.fa -bed kozak_mut_cosmic.bed -fo kozak_mut_cosmic.fa```
+* ```~/kozak/bin/bedtools2/bin/bedtools getfasta -fi hg38.fa -bed kozak_mut_cosmic.bed -fo kozak_mut_cosmic.fa```
 
 To capitalize all bases:
 ```python
@@ -333,7 +333,7 @@ Get a file in this format: chr	start	end	mut	ref	alt
 ## start codon to TIS
 ## move strand info to the last column
 import re
-f = open("/Users/xuanyi/kozak/analysis/gencode_v22/TIS_mut_kozak.txt","rU")
+f = open("TIS_mut_kozak.txt","rU")
 output = open("kozak_mut_pos_cosmic.txt","w")
 file_list = f.readlines()
 for line_list in file_list:
@@ -358,7 +358,7 @@ print("done")
 Get the all the mutated TIS sequences:
 ```python
 import re
-f = open("/Users/xuanyi/kozak/analysis/gencode_v22/TIS_mut_kozak.txt","rU")
+f = open("TIS_mut_kozak.txt","rU")
 f1=open("kozak_ori_cosmic.txt","rU")
 f2=open("kozak_mut_pos_cosmic.txt","rU")
 output = open("kozak_mut_seq_cosmic.txt","w")
@@ -462,7 +462,7 @@ for i in range (0,len(file_list)):
     output.write("\n")
 print "done"
 ```
-Get the difference between ref and mut for each genes
+Get the difference between ref and mut for each genes:
 ```python
 ## start codon to TIS
 ## move strand info to the last column
