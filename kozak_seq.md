@@ -17,7 +17,7 @@
 **Kozak strength**
 * Idea came from this paper: http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4299517/
 * **Supplementary Table S2** contains TIS strength prediction for all permutations of TIS from -6 to +5
-## Analysis
+## TIS mutations discovery
 **Getting the TIS coordinations in the human genome annotation**
 
 Extract start codon features from gencode.v19.annotation.gtf: 
