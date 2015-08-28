@@ -103,7 +103,6 @@ for line_list in file_list:
     if line[8] == line[17]:
         line_list += "\n"
         output.write(line_list)
-
 print "done"
 ```
 Get the transcript numbers for all mutations 
@@ -119,12 +118,10 @@ output1 = open("unfound_mutations.txt","w")
 file_list = f.readlines()
 file1_list = f1.readlines()
 temp = [0] * len(file1_list)
-
 tdict = {}
 for tline_list in file1_list:
     tline = re.split("\t",tline_list)
     tdict[tline[12]] = [tline[1],tline[7],tline[8],tline[9],tline[10],tline[15]]
-
 for line_list in file_list:
     line_list = line_list[:-1]
     line = re.split("\t",line_list)
@@ -135,39 +132,11 @@ for line_list in file_list:
         phist = tdict[line[11]][3]
         shist = tdict[line[11]][4]
         description = tdict[line[11]][5]
-        
         line_list += "\t" + transcript + "\t" + psite + "\t" + ssite + "\t" + phist + "\t" + shist + "\t" + description + "\n"
         output.write(line_list)
     except KeyError:
         nl = line_list + "\n"
         output1.write(nl)
-    
-##    for tline_list in file1_list:
-##        i = file1_list.index(tline_list)
-##        if temp[i]==0:
-##            tline = re.split("\t",tline_list)
-##            if tline[12] == line[11]:
-##                line_list += "\t" + tline[1] + "\n"
-##                output.write(line_list)
-##                temp[i] = 1
-    
-##    tid = tranid[1][16:-3]
-##    for tline_list in file1_list:
-##        tline = re.split("\t",tline_list)
-##        if line[11] == tline[12]:
-##            if tid == tline[1] or tid in tline[1] or tline[1] in tid:
-##                print tid + "\t" + tline[1]
-##                line_list +="\n"
-##                output.write(line_list)
-            
-
- ##  print line[11]
-
-##        
-##    
-##    if line[8] == line[17]:
-##        line_list += "\n"
-##        output.write(line_list)
 print "done"
 ```
 Get mutations in only transcript's translational start site
@@ -187,20 +156,6 @@ for line_list in file_list:
         output.write(line_list)
     else:
         output1.write(line_list)
-##    try:
-##        vcf = re.split(";",line[16])
-##    except IndexError:
-##        print file_list.index(line_list)
-##    vname = vcf[0][5:]
-##    if (gname == vname) or (gname in vname) or (vname in gname):
-##        continue
-##    else:
-##        output.write(line_list)
-        
-##    if line[8] == line[17]:
-##        line_list += "\n"
-##        output.write(line_list)
-
 print "done"
 ```
 Count number of occurrence for each gene
@@ -217,16 +172,10 @@ for line_list in file_list:
     line = re.split("\t",line_list)
     gtf= re.split(";",line[7])
     gname = gtf[4][12:-1]
-##    try:
-##        vcf = re.split(";",line[16])
-##    except IndexError:
-##        print file_list.index(line_list)
-##    vname = vcf[0][5:]
     if gname in names.keys():
         names[gname] = names[gname] + 1
     else:
         names[gname] = 1
-
 for n in names:
     output.write( n+"\t"+str(names[n])+'\n')
 print len(names)
@@ -241,7 +190,6 @@ import re
 f = open("TIS_mut_strand_tm.txt","rU")
 file_list = f.readlines()
 muts = {}
-
 for line_list in file_list:
     line = re.split("\t",line_list)
     m = line[23][:-1]
@@ -249,36 +197,18 @@ for line_list in file_list:
         muts[m] += 1
     else:
         muts[m] = 1
-
 for t in muts:
     print t + "\t" + str(muts[t]) + "\n"
-##    gtf= re.split(";",line[7])
-##    gname = gtf[4][12:-1]
-####    try:
-####        vcf = re.split(";",line[16])
-####    except IndexError:
-####        print file_list.index(line_list)
-####    vname = vcf[0][5:]
-##    if gname in names.keys():
-##        names[gname] = names[gname] + 1
-##    else:
-##        names[gname] = 1
-##
-##for n in names:
-##    output.write( n+"\t"+str(names[n])+'\n')
-##print len(names)
 print "done"
 ```
 Get all substitution mutations and record number of mutations at each position
 ```python
 ## count number of mutation at each position
-
 import re
 f = open("TIS_mut_strand_tm.txt","rU")
 output = open("count_position_tm_1.txt","w")
 file_list = f.readlines()
 position = [0]*15
-
 for line_list in file_list:
     line = re.split("\t",line_list)
     types = line[23]
@@ -301,19 +231,8 @@ for line_list in file_list:
                     except IndexError:
                         print pos
                         print line_list
-##
-##                    
-##                pos = int(line[4]) - int(line[10])
-            
-
 for i in range (0,len(position)):
     output.write(str(i) + "\t" + str(position[i]) + "\n")
-        
-
-    
-
-##for n in names:
-##    output.write( n+"\t"+str(names[n])+'\n')
 print "done"
 ```
 
@@ -322,7 +241,6 @@ For noncoding mutations: no strand info.
 Because noncoding mutations' incomplete documentation: to reduce number of reported mutations: same mutations at the same mutations are counted as one mutation collectively.
 ```python
 ## same mutation at same position counts as one mutation. 
-
 import re
 f = open("TIS_mutation_strand_ss.txt","rU")
 output = open("TIS_mut_strand_red.txt","w")
@@ -330,7 +248,6 @@ file_list = f.readlines()
 temp_p = ""
 temp_r = ""
 temp_a = ""
-
 for line_list in file_list:
     line = re.split("\t",line_list)
     pos = line[10]
@@ -341,8 +258,6 @@ for line_list in file_list:
         temp_p = pos
         temp_r = ref
         temp_a = alt
-##for n in names:
-##    output.write( n+"\t"+str(names[n])+'\n')
 print "done"
 ```
 ## Kozak strength prediction
@@ -356,7 +271,6 @@ import re
 f = open("TIS_mut_strand_tm.txt","rU")
 output = open("TIS_mut_kozak.txt","w")
 file_list = f.readlines()
-
 for line_list in file_list:
     line = re.split("\t",line_list)
     ref = line[12]
@@ -372,8 +286,6 @@ for line_list in file_list:
                     pos = int(line[4]) - int(line[10]) - i
         if pos > 2 and pos < 14 and pos != 9 and pos != 10 and pos != 11:
             output.write(line_list)
-##for n in names:
-##    output.write( n+"\t"+str(names[n])+'\n')
 print "done"
 ```
 Create a bed file with coordinates of mutated TIS sites 
@@ -401,7 +313,6 @@ for line_list in file_list:
         end-=3
         line[4] = str(end)
     output.write("chr" + line[0] + "\t" + line[3] + "\t" + line[4]  + "\n")
-
 print("done")
 ```
 Use **bedtools getfasta** to get the TIS sequences:
@@ -455,7 +366,6 @@ output = open("kozak_mut_seq_cosmic.txt","w")
 file_list = f.readlines()
 file_list1 = f1.readlines()
 file_list2 = f2.readlines()
-
 names = {}
 for i in range (0,len(file_list)):
     line = re.split("\t",file_list[i])
@@ -513,12 +423,10 @@ f1=open("kozak_strength.txt","rU")
 output = open("kozak_score_test.txt","w")
 file_list = f.readlines()
 file_list1 = f1.readlines()
-
 sdict = {}
 for line_list1 in file_list1:
     sline = re.split("\t", line_list1)
     sdict[sline[0]] = sline[1]
-
 for i in range (0,len(file_list)):
     line = re.split("\t",file_list[i])
     output.write(line[0] + "\t" + str(len(line)-3) + "\t")
@@ -576,20 +484,5 @@ for line_list in file_list:
         if temp > diff:
             diff = temp
     output.write(line[0] + "\t" + str(diff)+ "\n")
-##    strand = line[8]
-##    if strand == "+":
-##        start = int(line[3])
-##        start+=2
-##        line[3] = str(start)
-##        end = int(line[4])
-##        end-=1
-##        line[4] = str(end)
-##    else:
-##        start = int(line[3])
-##        line[3] = str(start)
-##        end = int(line[4])
-##        end-=3
-##        line[4] = str(end)
-##    output.write("chr" + line[0] + "\t" + line[3] + "\t" + line[4]  + "\n")
 print("done")
 ```
