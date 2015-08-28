@@ -15,7 +15,8 @@
 * **COSMIC Whole Genome** (coding & noncoding): Contains only mutations found with whole genome sequencing experiments. 
 
 **Kozak strength**
-* 
+* Idea came from this paper: http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4299517/
+* **Supplementary Table S2** contains TIS strength prediction for all permutations of TIS from -6 to +5
 ## Analysis
 **Getting the TIS coordinations in the human genome annotation**
 
@@ -65,7 +66,7 @@ for line in file_list:
     output.write(newline)
 print ("done")
 ```
-Get strand info in the vcf file:
+Get strand information in the vcf file to a seperate column (for the purpose of running bedtools):
 ```python
 import re
 f = open("CosmicCodingMuts.vcf","rU")
@@ -89,11 +90,11 @@ Run **bedtools intersect** to find mutations in the COSMIC database that occur i
 ```shell
 bedtools intersect -a ~/kozak/data/15_06_16_gencode_v22/gencode.v22.annotation_TIS_ss.gtf -b CosmicNonCodingVariants.vcf -wa -wb > TIS_mutation_strand_ss.txt
 ```
-Get mutation and TIS that are on the same strand of DNA
+Get mutation and TIS that are on the same strand of DNA:
 ```python
 import re
 f = open("TIS_mut_strand_ss.txt","rU")
-f1 = open("/Users/xuanyi/kozak/data/15_06_19_Cosmic_Data/CosmicMutantExport.tsv")
+f1 = open("CosmicMutantExport.tsv")
 output = open("TIS_mut_strand_transcript.txt","w")
 file_list = f.readlines()
 file1_list = f1.readlines()
@@ -105,14 +106,14 @@ for line_list in file_list:
         output.write(line_list)
 print "done"
 ```
-Get the transcript numbers for all mutations 
+Get the transcript ID numbers for all mutations:
 ```python
 ## get the transcipt id for all mutations
 ## use binary search
 ## get all mutation info as well
 import re
 f = open("TIS_mut_strand_ss.txt","rU")
-f1 = open("/Users/xuanyi/kozak/data/15_06_19_Cosmic_Data/CosmicMutantExport.tsv")
+f1 = open("CosmicMutantExport.tsv")
 output = open("TIS_mut_strand_transcript.txt","w")
 output1 = open("unfound_mutations.txt","w")
 file_list = f.readlines()
@@ -139,7 +140,7 @@ for line_list in file_list:
         output1.write(nl)
 print "done"
 ```
-Get mutations in only transcript's translational start site
+Get only mutations with correctly matched transcription ID number:
 ```python
 ## check if gtf and vcf has the same gene name
 import re
@@ -158,11 +159,10 @@ for line_list in file_list:
         output1.write(line_list)
 print "done"
 ```
-Count number of occurrence for each gene
+Count number of mutation occurrence for each gene:
 ```python
 ## count number of occurrence for each gene
 ## using the name from gencode
-
 import re
 f = open("TIS_mut_strand_tm.txt","rU")
 output = open("count_gene_tm.txt","w")
@@ -181,7 +181,7 @@ for n in names:
 print len(names)
 print "done"
 ```
-Get counts of different types of mutations. 
+Get counts of different characterizations of mutations: 
 ```python
 ## count number of occurrence for each gene
 ## using the name from gencode
@@ -201,7 +201,7 @@ for t in muts:
     print t + "\t" + str(muts[t]) + "\n"
 print "done"
 ```
-Get all substitution mutations and record number of mutations at each position
+Get all substitution mutations and record number of mutations at each position from -9 to +6:
 ```python
 ## count number of mutation at each position
 import re
@@ -237,8 +237,8 @@ print "done"
 ```
 
 ## Noncoding mutations
-For noncoding mutations: no strand info.
-Because noncoding mutations' incomplete documentation: to reduce number of reported mutations: same mutations at the same mutations are counted as one mutation collectively.
+For noncoding mutations, there is no strand information. To reduce the possibility of redundancy in the reported mutations.
+number of reported mutations: same mutations at the same mutations are counted as one mutation collectively.
 ```python
 ## same mutation at same position counts as one mutation. 
 import re
