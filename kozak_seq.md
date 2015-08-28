@@ -237,10 +237,8 @@ print "done"
 ```
 
 ## Noncoding mutations
-For noncoding mutations, there is no strand information. To reduce the possibility of redundancy in the reported mutations.
-number of reported mutations: same mutations at the same mutations are counted as one mutation collectively.
+For noncoding mutations, there is no strand information. To reduce the possibility of redundancy in the reported mutations, same mutations at the same position are counted as one mutation collectively.
 ```python
-## same mutation at same position counts as one mutation. 
 import re
 f = open("TIS_mutation_strand_ss.txt","rU")
 output = open("TIS_mut_strand_red.txt","w")
@@ -262,8 +260,8 @@ print "done"
 ```
 ## Kozak strength prediction
 I used dinucleotide PWM from the kozak paper (link to the paper)
-* Get the sequence from -6 to +5
-* Both ref and alt and get their predicted kozak strength
+* Get the genomic sequences from -6 to +5 for both the reference sequences and the mutated sequences.
+* Use the Kozak strength table to get the predicted kozak strengths
 
 Get only mutations from -6 to +5 excluding the start codon
 ```python
@@ -317,6 +315,7 @@ print("done")
 ```
 Use **bedtools getfasta** to get the TIS sequences:
 * ```~/kozak/bin/bedtools2/bin/bedtools getfasta -fi /Users/xuanyi/kozak/data/15_07_13_gencode_fasta/hg38.fa -bed kozak_mut_cosmic.bed -fo kozak_mut_cosmic.fa```
+
 To capitalize all bases:
 ```python
 import re
