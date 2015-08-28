@@ -485,3 +485,4 @@ for line_list in file_list:
     output.write(line[0] + "\t" + str(diff)+ "\n")
 print("done")
 ```
+At this point, we have a list of mutations and their predicted effects on TIS efficiency changes. I searched in the GeneCards database (http://www.genecards.org/) for the documented functions of genes and saw whether the predicted changes in TIS efficiency could contribute to tumorgenesis. Further wet lab mutagenesis experiments would be crucial in determining whether these found mutations play roles in cancer development. 
